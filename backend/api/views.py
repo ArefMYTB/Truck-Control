@@ -1,3 +1,8 @@
 from django.shortcuts import render
+from rest_framework.viewsets import ModelViewSet
+from .models import TruckLog
+from .serializers import TruckLogSerializer
 
-# Create your views here.
+class TruckLogViewSet(ModelViewSet):
+    queryset = TruckLog.objects.all()
+    serializer_class = TruckLogSerializer
