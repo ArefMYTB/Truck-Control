@@ -1,9 +1,11 @@
 "use client";
 import React, { useEffect, useState } from 'react';
+import Image from 'next/image';
+import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 import './navbar.scss';
-import { images } from '@/app/Constants';
+import { images } from '../../Constants';
 
-const Navbar = () => {
+const Navbar = ({ isSidebarOpen, toggleSidebar }) => {
   const [dateTime, setDateTime] = useState({ time: '', date: '' });
 
   useEffect(() => {
@@ -22,21 +24,23 @@ const Navbar = () => {
 
   return (
     <div className="navbar">
-      <div className="left-section">
-        <img 
-          src={images.user}
-          alt="Logo" 
-          className="logo" 
-        />
+      <div className="navbar-left-section">
+        <div className="logo-container">
+          <Image 
+            src={images.user}
+            alt="User Logo"
+            className="logo"
+            width={40}
+            height={40}
+          />
+        </div>
         <div className="date-time">
           {dateTime.time} | {dateTime.date}
         </div>
       </div>
-      <div className="right-section">
-        <div className="hamburger">
-          <div className="line"></div>
-          <div className="line"></div>
-          <div className="line"></div>
+      <div className="navbar-right-section">
+        <div className="toggle-button" onClick={toggleSidebar}>
+          {isSidebarOpen ? <FaChevronRight /> : <FaChevronLeft />}
         </div>
       </div>
     </div>

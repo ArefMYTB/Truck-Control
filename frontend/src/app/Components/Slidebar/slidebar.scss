@@ -1,0 +1,117 @@
+
+.sidebar {
+    position: fixed;
+    top: 0;
+    right: -250px;
+    width: 250px;
+    height: 100vh;
+    background-color: #fff;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.2);
+    overflow-y: auto;
+    transition: right 0.3s ease;
+    z-index: 999;
+    padding: 20px;
+
+    .logo {
+        margin: 30px 15px 30px 10px;
+        display: flex;
+        align-items: center;
+        direction: rtl;
+
+        h3 {
+            margin: 0;
+        }
+
+        p {
+            margin: 0;
+            font-size: 14px;
+            color: #555;
+        }
+    }
+
+    .section {
+        margin-bottom: 50px; 
+        direction: rtl;
+        
+        .title-section {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+
+            .title-icon {
+                display: flex;
+            }
+        }
+        
+        .sec-icon {
+            font-size: 24px;
+            margin-left: 10px;
+        }
+        
+        .arrow-icon {
+            cursor: pointer;
+            font-size: 12px;
+        }
+        
+        .item-list {
+            margin-top: 10px;
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            cursor: pointer;
+            
+            :hover {
+                color: #12b2d6;
+            }
+        }
+        
+        .item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 8px;
+            gap: 8px;
+
+        }
+        
+        .sec-item-icon {
+            font-size: 20px;
+            margin-right: 8px;
+        }
+
+    }
+    
+    
+
+
+
+
+
+    .dashboard {
+        margin-top: 20px;
+
+        .chart {
+        text-align: center;
+        margin-bottom: 20px;
+        }
+
+        .stats {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+
+        .stat-item {
+            display: flex;
+            justify-content: space-between;
+            background-color: #eaeaea;
+            padding: 10px;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+        }
+    }
+}
+
+.sidebar.open {
+right: 0;
+}
