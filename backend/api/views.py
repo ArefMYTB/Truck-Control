@@ -5,10 +5,6 @@ from .serializers import TruckLogSerializer
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
-class TruckLogViewSet(ModelViewSet):
-    queryset = TruckLog.objects.all()
-    serializer_class = TruckLogSerializer
-
 
 @api_view(['GET'])
 def get_dashboard_data(request):
@@ -29,3 +25,27 @@ def get_dashboard_data(request):
     }
 
     return Response(response_data)
+
+
+@api_view(['GET'])
+def get_camera_videos(request):
+    video_data = [
+        {"id": "4", "title": "دوربین پلاک خوان", "video_src": "/media/videos/LP.mp4"},
+        {"id": "3", "title": "دوربین کانتینر بغل", "video_src": "/media/videos/side.mp4"},
+        {"id": "2", "title": "دوربین پشت", "video_src": "/media/videos/back.mp4"},
+        {"id": "1", "title": "دوربین روبرو", "video_src": "/media/videos/front.mp4"},
+    ]
+
+    return Response(video_data)
+
+
+
+
+
+
+
+class TruckLogViewSet(ModelViewSet):
+    queryset = TruckLog.objects.all()
+    serializer_class = TruckLogSerializer
+
+
