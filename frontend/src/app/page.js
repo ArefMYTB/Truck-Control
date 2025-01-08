@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import Navbar from "./Components/Navbar/navbar";
 import Sidebar from "./Components/Slidebar/slidebar";
+import Camera from './Containers/Camera/camera';
 
 export default function Home() {
 
@@ -15,6 +16,7 @@ export default function Home() {
     <div className="app">
       <Navbar isSidebarOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
       <Sidebar isOpen={isSidebarOpen} />
+      <Camera />
     </div>
   );
 }

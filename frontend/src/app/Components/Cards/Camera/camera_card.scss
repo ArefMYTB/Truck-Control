@@ -1,0 +1,45 @@
+.camera_card {
+    border: 1px solid #e0e0e0;
+    border-radius: 10px;
+    background-color: #fff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    width: 100%;
+    max-width: 400px;
+    padding: 8px;
+  }
+  
+  .camera_card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    // background-color: #f8f8f8;
+    border-bottom: 1px solid #e0e0e0;
+    direction: rtl;
+  }
+  
+  .camera_card-title {
+    font-size: 16px;
+    font-weight: bold;
+    margin: 0;
+  }
+  
+  .fullscreen-icon {
+    font-size: 16px;
+    cursor: pointer;
+    color: #555;
+  }
+  
+  .camera_card-video {
+    position: relative;
+    padding: 0;
+  }
+  
+  .video {
+    width: 100%;
+    height: auto;
+    display: block;
+    border-radius: 0 0 10px 10px;
+  }
+  
