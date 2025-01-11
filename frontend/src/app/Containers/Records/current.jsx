@@ -1,4 +1,5 @@
 import React from "react";
+import IranLicensePlate from "@/app/Components/Licence_Plate/Iran/lp";
 
 const Current = () => {
     return (
@@ -8,6 +9,7 @@ const Current = () => {
                     <span className="mr-2">جاری</span>
                     <div className="w-2.5 h-2.5 bg-green-500"></div>
                 </div>
+                {/* <IranLicensePlate /> */}
             </div>
         </div>
     );
