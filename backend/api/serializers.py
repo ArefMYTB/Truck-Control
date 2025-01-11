@@ -1,7 +1,7 @@
 from rest_framework import serializers
-from .models import TruckLog
+from .models import Truck
 
-class TruckLogSerializer(serializers.ModelSerializer):
+class TruckSerializer(serializers.ModelSerializer):
     class Meta:
-        model = TruckLog
-        fields = '__all__'
+        model = Truck
+        fields = '__all__'  # Serialize all fields

@@ -1,10 +1,9 @@
 from django.shortcuts import render
 from rest_framework.viewsets import ModelViewSet
-from .models import TruckLog
-from .serializers import TruckLogSerializer
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-
+from .models import Truck
+from .serializers import TruckSerializer
 
 @api_view(['GET'])
 def get_dashboard_data(request):
@@ -40,12 +39,51 @@ def get_camera_videos(request):
 
 
 
+@api_view(['GET'])
+def get_truck_data(request):
+    trucks = Truck.objects.all() 
+    serializer = TruckSerializer(trucks, many=True)
+    return Response(serializer.data)
 
 
+# Data
+# python manage.py shell
+# from api.models import Truck
 
+# Truck.objects.create(
+#     plate_part1='10',
+#     plate_letter='ه',
+#     plate_part2='678',
+#     plate_code='22',
+#     container_code='C001',
+#     load_type='نوع ۱',
+#     container_size='۲۰ فوت',
+#     driver_id='0123456789',
+#     driver_confirmed=True,
+#     weight='2000kg',
+#     seal=True,
+#     goods_type='کالا ۱',
+#     route_type='مسیر ۱',
+#     status='وضعیت ۱',
+#     invoice_date='2025-01-01',
+#     pass_date='2025-01-02',
+# )
 
-class TruckLogViewSet(ModelViewSet):
-    queryset = TruckLog.objects.all()
-    serializer_class = TruckLogSerializer
-
-
+# Truck.objects.create(
+#     plate_part1='27',
+#     plate_letter='د',
+#     plate_part2='345',
+#     plate_code='11',
+#     container_code='C002',
+#     load_type='نوع ۲',
+#     container_size='۴۰ فوت',
+#     driver_id='9876543210',
+#     driver_confirmed=False,
+#     weight='4000kg',
+#     seal=False,
+#     goods_type='کالا ۲',
+#     route_type='مسیر ۲',
+#     status='وضعیت ۲',
+#     invoice_date='2025-01-03',
+#     pass_date='2025-01-04',
+# )
