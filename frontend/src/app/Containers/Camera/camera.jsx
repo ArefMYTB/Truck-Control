@@ -5,13 +5,6 @@ import Camera_Card from '@/app/Components/Cards/Camera/camera_card';
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 
 const Camera = () => {
-  
-    // const initialVideos = [
-    //     { id: "1", title: "دوربین پلاک خوان", videoSrc: "https://www.w3schools.com/html/mov_bbb.mp4" },
-    //     { id: "2", title: "دوربین کانتینر بغل", videoSrc: "https://www.w3schools.com/html/mov_bbb.mp4" },
-    //     { id: "3", title: "دوربین پشت", videoSrc: "https://www.w3schools.com/html/mov_bbb.mp4" },
-    //     { id: "4", title: "دوربین روبرو", videoSrc: "https://www.w3schools.com/html/mov_bbb.mp4" },
-    // ];
 
     const [videos, setVideos] = useState([]);
 

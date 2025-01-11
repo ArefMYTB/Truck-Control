@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import Navbar from "./Components/Navbar/navbar";
 import Sidebar from "./Components/Slidebar/slidebar";
 import Camera from './Containers/Camera/camera';
+import Records from './Containers/Records/records';
 
 export default function Home() {
 
@@ -17,6 +18,7 @@ export default function Home() {
       <Navbar isSidebarOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
       <Sidebar isOpen={isSidebarOpen} />
       <Camera />
+      <Records />
     </div>
   );
 }
