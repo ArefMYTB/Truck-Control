@@ -6,7 +6,11 @@ class Truck(models.Model):
     plate_part2 = models.CharField(max_length=10)  
     plate_code = models.CharField(max_length=10)   
     
-    container_code = models.CharField(max_length=50)
+    container_part1 = models.CharField(max_length=50)
+    container_part2 = models.CharField(max_length=50)
+    container_part3 = models.CharField(max_length=50)
+    container_part4 = models.CharField(max_length=50)
+    
     load_type = models.CharField(max_length=50)
     container_size = models.CharField(max_length=50)
     driver_id = models.CharField(max_length=20)
@@ -19,8 +23,6 @@ class Truck(models.Model):
     invoice_date = models.DateField()
     pass_date = models.DateField()
 
-    def __str__(self):
-        return f"Truck {self.container_code} - {self.plate_part1}{self.plate_letter}{self.plate_part2} ({self.plate_code})"
 
 
 

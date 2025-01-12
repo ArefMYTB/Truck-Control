@@ -51,11 +51,14 @@ def get_truck_data(request):
 # from api.models import Truck
 
 # Truck.objects.create(
-#     plate_part1='10',
-#     plate_letter='ه',
-#     plate_part2='678',
-#     plate_code='22',
-#     container_code='C001',
+#     plate_part1='18',
+#     plate_letter='ب',
+#     plate_part2='815',
+#     plate_code='10',
+#     container_part1='MIOU',
+#     container_part2='486429',
+#     container_part3='4',
+#     container_part4='45G1',
 #     load_type='نوع ۱',
 #     container_size='۲۰ فوت',
 #     driver_id='0123456789',
@@ -74,7 +77,10 @@ def get_truck_data(request):
 #     plate_letter='د',
 #     plate_part2='345',
 #     plate_code='11',
-#     container_code='C002',
+#     container_part1='MIOU',
+#     container_part2='486429',
+#     container_part3='4',
+#     container_part4='45G1',
 #     load_type='نوع ۲',
 #     container_size='۴۰ فوت',
 #     driver_id='9876543210',
@@ -87,3 +93,4 @@ def get_truck_data(request):
 #     invoice_date='2025-01-03',
 #     pass_date='2025-01-04',
 # )
+
