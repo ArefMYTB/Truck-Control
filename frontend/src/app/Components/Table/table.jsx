@@ -4,23 +4,24 @@ import { FaEdit } from 'react-icons/fa';
 import { FaTrashCan } from 'react-icons/fa6';
 import { BsEyeFill } from 'react-icons/bs';
 import { BsInfoCircleFill } from 'react-icons/bs';
-import IranLicensePlate from "@/app/Components/Licence_Plate/Iran/lp"
+import IranLicensePlate from "@/app/Components/Plate/Licence_Plate/Iran/lp"
+import ContainerPlate from "@/app/Components/Plate/Container_Plate/cp"
 
 const Table = () => {
-    const [data, setData] = useState([]); // State to store table data
-    const [loading, setLoading] = useState(true); // Loading state
-    const [error, setError] = useState(null); // Error state
+    const [data, setData] = useState([]); 
+    const [loading, setLoading] = useState(true); 
+    const [error, setError] = useState(null); 
 
     useEffect(() => {
-        // Fetch data from Django backend
+
         const fetchData = async () => {
         try {
-            const response = await fetch('http://localhost:8000/api/trucklog/'); // Replace with your API endpoint
+            const response = await fetch('http://localhost:8000/api/trucklog/');
             if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
             }
             const result = await response.json();
-            setData(result); // Assuming the API returns an array of objects
+            setData(result); 
         } catch (err) {
             setError(err.message);
         } finally {
@@ -66,13 +67,21 @@ const Table = () => {
                     <td className="px-4 py-2 align-middle">{index + 1}</td>
                     <td className="px-4 py-2 align-middle" dir="ltr">
                         <IranLicensePlate
-                        part1={item.plate_part1}
-                        letter={item.plate_letter}
-                        part2={item.plate_part2}
-                        code={item.plate_code}
+                            part1={item.plate_part1}
+                            letter={item.plate_letter}
+                            part2={item.plate_part2}
+                            code={item.plate_code}
+                            ws="150"
                         />
                     </td>
-                    <td className="px-4 py-2 align-middle">{item.container_code}</td>
+                    <td className="px-4 py-2 align-middle">
+                        <ContainerPlate
+                            part1={item.container_part1}
+                            part2={item.container_part2}
+                            part3={item.container_part3}
+                            part4={item.container_part4}
+                        />
+                    </td>
                     <td className="px-4 py-2 align-middle">{item.load_type}</td>
                     <td className="px-4 py-2 align-middle">{item.container_size}</td>
                     {/* Driver ID with confirmation icon */}
