@@ -41,7 +41,7 @@ def get_camera_videos(request):
 
 @api_view(['GET'])
 def get_truck_data(request):
-    trucks = Truck.objects.all() 
+    trucks = Truck.objects.all()
     serializer = TruckSerializer(trucks, many=True)
     return Response(serializer.data)
 
@@ -49,6 +49,39 @@ def get_truck_data(request):
 # Data
 # python manage.py shell
 # from api.models import Truck
+
+# Truck.objects.create(
+#     vehicle_image_front="@/app/assets/images/luffy.jpg",
+#     vehicle_image_back="@/app/assets/images/luffy.jpg",
+#     lp_codes=["1272344ج"],
+#     lp_image="@/app/assets/images/lp.png",
+#     lp_acc=84,
+#     plate_type="Iran",
+#     container_codes=["CICU572872045G1"],
+#     container_image="@/app/assets/images/cp.png",
+#     container_acc=90,
+#     Container_size="20 فوت",
+#     load_type="فله",
+#     seal=True,
+#     imdg=False,
+#     driver_id="9876543210",
+#     driver_face="@/app/assets/images/luffy.jpg",
+#     driver_confirmed = True,
+#     log_time="2025-01-14 10:30:00",
+#     status="تست",
+#     weight="200kg"
+# )
+
+
+
+
+
+
+
+
+
+
+
 
 # Truck.objects.create(
 #     plate_part1='18',
@@ -93,4 +126,3 @@ def get_truck_data(request):
 #     invoice_date='2025-01-03',
 #     pass_date='2025-01-04',
 # )
-
