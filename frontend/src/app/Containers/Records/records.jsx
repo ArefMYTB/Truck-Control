@@ -18,8 +18,10 @@ const Records = () => {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
         const result = await response.json();
-        console.log(result)
-        setData(result);
+        // Reverse the data here
+        const reversedData = result.reverse();
+        console.log(reversedData)
+        setData(reversedData);
       } catch (err) {
         setError(err.message);
       } finally {
@@ -39,7 +41,7 @@ const Records = () => {
     }
 
     // Separate the latest record and the rest of the data
-    const latestRecord = data[-1];
+    const latestRecord = data[0];
     const remainingRecords = data.slice(1);
 
     return (
