@@ -2,6 +2,7 @@ from django.shortcuts import render
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
+from rest_framework import status
 from .models import Truck
 from .serializers import TruckSerializer
 
@@ -45,6 +46,31 @@ def get_truck_data(request):
     serializer = TruckSerializer(trucks, many=True)
     return Response(serializer.data)
 
+@api_view(['PUT'])
+def update_truck(request, pk):
+    try:
+        truck = Truck.objects.get(pk=pk)
+    except Truck.DoesNotExist:
+        return Response({'error': 'Truck not found'}, status=status.HTTP_404_NOT_FOUND)
+    
+    serializer = TruckSerializer(truck, data=request.data)
+    if serializer.is_valid():
+        serializer.save()
+        return Response(serializer.data)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['DELETE'])
+def delete_truck(request, pk):
+    try:
+        truck = Truck.objects.get(pk=pk)
+        truck.delete()
+        return Response({"message": "Truck deleted successfully"}, status=status.HTTP_200_OK)
+    except Truck.DoesNotExist:
+        return Response({"error": "Truck not found"}, status=status.HTTP_404_NOT_FOUND)
+    except Exception as e:
+        print(f"Error deleting truck: {e}") 
+        return Response({"error": "An error occurred"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
 
 # Data
 # python manage.py shell
@@ -53,17 +79,17 @@ def get_truck_data(request):
 # Truck.objects.create(
 #     vehicle_image_front="@/app/assets/images/luffy.jpg",
 #     vehicle_image_back="@/app/assets/images/luffy.jpg",
-#     lp_codes=["1272344ج"],
+#     lp_codes=["1236910س"],
 #     lp_image="@/app/assets/images/lp.png",
-#     lp_acc=84,
+#     lp_acc=88,
 #     plate_type="Iran",
-#     container_codes=["CICU572872045G1"],
+#     container_codes=["MIOU525872145G1"],
 #     container_image="@/app/assets/images/cp.png",
-#     container_acc=90,
+#     container_acc=77,
 #     Container_size="20 فوت",
 #     load_type="فله",
 #     seal=True,
-#     imdg=False,
+#     imdg=True,
 #     driver_id="9876543210",
 #     driver_face="@/app/assets/images/luffy.jpg",
 #     driver_confirmed = True,
