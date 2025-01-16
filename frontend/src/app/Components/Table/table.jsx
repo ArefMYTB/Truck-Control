@@ -8,6 +8,40 @@ import IranLicensePlate from "@/app/Components/Plate/License_Plate/Iran/lp"
 import ContainerPlate from "@/app/Components/Plate/Container_Plate/cp"
 
 const Table = ({ data }) => {
+
+  const [tableData, setTableData] = useState(data);
+
+  const handleDelete = async (id) => {
+    if (!window.confirm('Are you sure you want to delete this record?')) return;
+  
+    try {
+      const response = await fetch(`http://localhost:8000/api/trucklog/delete/${id}/`, {
+        method: 'DELETE',
+      });
+  
+      if (response.ok) {
+        // Record successfully deleted
+        setData((prevData) => prevData.filter((item) => item.id !== id)); // Remove the deleted record from state
+        alert('Record deleted successfully.');
+      } else {
+        // Error: the response is not OK, show the error
+        const errorData = await response.json();
+        alert(`Failed to delete the record: ${errorData.error}`);
+      }
+    } catch (error) {
+      console.error('Error deleting record:', error); // Log the error for debugging
+      alert('An error occurred while deleting the record.');
+    }
+  };  
+  
+
+  const handleEdit = (id) => {
+    // Logic to open an edit form or modal (you can customize this as per your requirements)
+    alert(`Edit record with ID: ${id}`);
+  };
+
+
+
   const [visibleColumns, setVisibleColumns] = useState({
     row: true,
     plate: true,
@@ -92,6 +126,9 @@ const Table = ({ data }) => {
               )}
               {visibleColumns.containerCode && (
                 <td className="px-4 py-2 align-middle">
+                  <div c>
+
+                  </div>
                   <ContainerPlate
                     part1={item.container_codes[0].slice(0, 4)}
                     part2={item.container_codes[0].slice(4, 10)}
@@ -104,7 +141,7 @@ const Table = ({ data }) => {
               {visibleColumns.containerSize && <td className="px-4 py-2 align-middle">{item.Container_size}</td>}
               {visibleColumns.driverId && (
                 <td className="px-4 py-2 align-middle">
-                  <div className="flex items-center justify-end gap-2">
+                  <div className="flex items-center justify-center gap-2">
                     <span>{item.driver_id}</span>
                     <BsInfoCircleFill
                       className={`${
@@ -164,10 +201,12 @@ const Table = ({ data }) => {
                     <FaEdit
                       className="text-blue-500 cursor-pointer hover:scale-110 transition"
                       title="ویرایش"
+                      onClick={() => handleEdit(item.id)}
                     />
                     <FaTrashCan
                       className="text-red-500 cursor-pointer hover:scale-110 transition"
                       title="حذف"
+                      onClick={() => handleDelete(item.id)}
                     />
                   </div>
                 </td>
