@@ -1,13 +1,71 @@
-import React from "react";
+import React, { useState } from "react";
 import IranLicensePlate from "@/app/Components/Plate/License_Plate/Iran/lp";
 import ContainerPlate from "@/app/Components/Plate/Container_Plate/cp";
-import {images} from '../../Constants'
-import Image from 'next/image';
 import { FaEdit } from 'react-icons/fa';
 import { FaTrashCan } from 'react-icons/fa6';
 import { BsEyeFill } from 'react-icons/bs';
+import Edit from "@/app/Components/Edit/edit";
+import View from "@/app/Components/View/view";
 
-const Current = ({ data }) => {
+const Current = ({ data: initialData }) => {
+
+    const [data, setData] = useState(initialData);
+    const [isEditModalOpen, setEditModalOpen] = useState(false);
+    const [isViewModalOpen, setViewModalOpen] = useState(false);
+    const [currentTruck, setCurrentTruck] = useState(null);
+
+    const handleEdit = (truck) => {
+        setCurrentTruck(truck); // Set the truck data for editing
+        setEditModalOpen(true); // Open the modal
+    };
+
+    const handleUpdate = async (updatedTruck) => {
+        try {
+            const response = await fetch(
+                `http://localhost:8000/api/trucklog/update/${updatedTruck.id}/`,
+                {
+                    method: "PUT",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify(updatedTruck),
+                }
+            );
+
+            if (response.ok) {
+                const updatedData = await response.json();
+                setData(updatedData); // Update the single truck data
+                setEditModalOpen(false); // Close the modal
+            } else {
+                alert("Failed to update the truck.");
+            }
+        } catch (error) {
+            console.error("Error updating truck:", error);
+            alert("An error occurred while updating the truck.");
+        }
+    };
+
+    const handleDelete = async (id) => {
+        if (!window.confirm("آیا از حذف این رکورد اطمینان دارید؟")) return;
+
+        const response = await fetch(
+            `http://localhost:8000/api/trucklog/delete/${id}/`,
+            {
+                method: "DELETE",
+            }
+        );
+
+        if (response.ok) {
+            setData(null); // Clear the data after deletion
+        } else {
+            alert("عملیات حذف رکورد ناموفق بود.");
+        }
+    };
+
+    const handleView = (truck) => {
+        setCurrentTruck(truck); // Set the truck data for viewing
+        setViewModalOpen(true); // Open the view modal
+    };
 
     return (
         <div className="current-record">
@@ -20,71 +78,109 @@ const Current = ({ data }) => {
                     <div className="grid gap-3">
                         <span>پلاک</span>
                         <div className="flex">
-                            <Image
+                        <img
+                            src={`http://localhost:8000/media/${data.lp_image}`}
+                            alt="License Plate"
+                            className="w-[150px]"
+                        />
+                            {/* <Image
                                 src={images.lp}
                                 className="rounded-lg"
                                 width={150}
-                            />
+                            /> */}
                         </div>
-                        <IranLicensePlate
-                            part1={data.lp_codes[0].slice(0, 2)}
-                            letter={data.lp_codes[0].slice(7)}
-                            part2={data.lp_codes[0].slice(2, 5)}
-                            code={data.lp_codes[0].slice(5, 7)}
-                            ws="150"
-                        />
-                        <div className="flex-grow flex justify-between items-center text-[10px]">
-                            <span>درصد تشخیص: <span className="text-green-500">{data.lp_acc}%</span></span>
-                            <div className="flex items-center text-[#042973]">
-                                <FaEdit className="ml-1" />
-                                <span>ویرایش</span>
-                            </div>
-                        </div>
+                        {
+                            data.lp_codes.map((lpCode, index) => (
+                                <div key={index}>
+                                    <IranLicensePlate
+                                    key={index}
+                                    part1={lpCode.slice(0, 2)}
+                                    letter={lpCode.slice(7)}
+                                    part2={lpCode.slice(2, 5)}
+                                    code={lpCode.slice(5, 7)}
+                                    ws="150"
+                                    />
+                                    {data.lp_acc && data.lp_acc[index] && (
+                                        <div className="flex-grow flex justify-between items-center text-[10px] mt-2">
+                                        <span>درصد تشخیص: <span className="text-green-500">{data.lp_acc[index]}%</span></span>
+                                        <div className="flex items-center text-[#042973]">
+                                            <FaEdit className="ml-1" />
+                                            <span>ویرایش</span>
+                                        </div>
+                                        </div>
+                                    )}
+                                </div>
+                            ))
+                        }
+                        
                     </div>
 
                     <div className="grid gap-3">
                         <span>کد کانتینر</span>
                         <div className="flex">
-                            <Image
+                            <img
+                                src={`http://localhost:8000/media/${data.container_image}`}
+                                alt="Container Code"
+                                className="w-[150px]"
+                            />
+                            {/* <Image
                                 src={images.cp}
                                 className="rounded-lg"
                                 width={150}
-                            />
+                            /> */}
                         </div>
-                        <ContainerPlate
-                            part1={data.container_codes[0].slice(0, 4)}
-                            part2={data.container_codes[0].slice(4, 10)}
-                            part3={data.container_codes[0].slice(10, 11)}
-                            part4={data.container_codes[0].slice(11, 15)}
-                        />
-                        <div className="flex-grow flex justify-between items-center text-[10px]">
-                            <span>درصد تشخیص: <span className="text-green-500">{data.container_acc}%</span></span>
-                            <div className="flex items-center text-[#042973]">
-                                <FaEdit className="ml-1" />
-                                <span>ویرایش</span>
-                            </div>
-                        </div>
+                        {
+                            data.container_codes.map((containerCode, index) => (
+                                <div key={index}>
+                                <ContainerPlate
+                                    part1={containerCode.slice(0, 4)}
+                                    part2={containerCode.slice(4, 10)}
+                                    part3={containerCode.slice(10, 11)}
+                                    part4={containerCode.slice(11, 15)}
+                                />
+                                {data.container_acc && data.container_acc[index] && (
+                                    <div className="flex-grow flex justify-between items-center text-[10px] mt-2">
+                                    <span>درصد تشخیص: <span className="text-green-500">{data.container_acc[index]}%</span></span>
+                                    <div className="flex items-center text-[#042973]">
+                                        <FaEdit className="ml-1" />
+                                        <span>ویرایش</span>
+                                    </div>
+                                    </div>
+                                )}
+                                </div>
+                            ))
+                        }
                     </div>
 
                     <div className="grid gap-3 mr-4">
                         <span>تصاویر دوربین</span>
                         <div className="flex justify-center gap-2">
                             <div className="flex flex-col items-center">
-                                <Image
+                                <img
+                                    src={`http://localhost:8000/media/${data.vehicle_image_front}`}
+                                    alt="Front Truck"
+                                    className="w-[100px] h-[100] rounded-lg"
+                                />
+                                {/* <Image
                                     src={images.user}
                                     className="rounded-lg"
                                     width={100}
                                     height={100}
-                                />
+                                /> */}
                                 <p className="mt-2 text-center text-sm">تصویر روبرو</p>
                             </div>
                             <div className="flex flex-col items-center">
-                                <Image
+                                <img
+                                    src={`http://localhost:8000/media/${data.vehicle_image_back}`}
+                                    alt="Back Truck"
+                                    className="w-[100px] h-[100] rounded-lg"
+                                />
+                                {/* <Image
                                     src={images.user}
                                     className="rounded-lg"
                                     width={100}
                                     height={100}
-                                />
+                                /> */}
                                 <p className="mt-2 text-center text-sm">تصویر پشت</p>
                             </div>
                         </div>
@@ -93,14 +189,18 @@ const Current = ({ data }) => {
                     <div className="grid gap-3 mr-4">
                         <span className="text-center"> احراز هویت</span>
                         <div className="flex flex-col items-center">
-                            {/* Image */}
-                            <Image
+                            <img
+                                src={`http://localhost:8000/media/${data.driver_face}`}
+                                alt="Driver Image"
+                                className="w-[100px] h-[100] rounded-lg"
+                            />
+                            {/* <Image
                                 src={images.user} // Replace with the actual path or URL
                                 className="rounded-lg"
                                 width={100}
                                 height={100}
                                 alt="Centered Image"
-                            />
+                            /> */}
 
                             {/* Confirmation Rectangle */}
                             <div
@@ -206,19 +306,36 @@ const Current = ({ data }) => {
                             <BsEyeFill
                                 className="text-green-500 text-2xl cursor-pointer hover:scale-110 transition"
                                 title="مشاهده"
+                                onClick={() => handleView(data)}
                             />
                             <FaEdit
                                 className="ml-1 text-blue-500 text-2xl cursor-pointer hover:scale-110 transition"
                                 title="ویرایش"
+                                onClick={() => handleEdit(data)}
                             />
                             <FaTrashCan
                                 className="text-red-500 text-2xl cursor-pointer hover:scale-110 transition"
                                 title="حذف"
+                                onClick={() => handleDelete(data.id)}
                             />
                         </div>
-
                     </div>
+                    {/* Edit */}
+                    {isEditModalOpen && currentTruck && (
+                        <Edit
+                        truck={currentTruck}
+                        onClose={() => setEditModalOpen(false)}
+                        onSave={handleUpdate}
+                        />
+                    )}
 
+                    {/* View */}
+                    {isViewModalOpen && currentTruck && (
+                        <View
+                        truck={currentTruck}
+                        onClose={() => setViewModalOpen(false)} // Close the view modal
+                        />
+                    )}            
                 </div>
             </div>
         </div>
