@@ -6,67 +6,98 @@ import { BsEyeFill } from 'react-icons/bs';
 import { BsInfoCircleFill } from 'react-icons/bs';
 import IranLicensePlate from "@/app/Components/Plate/License_Plate/Iran/lp"
 import ContainerPlate from "@/app/Components/Plate/Container_Plate/cp"
+import Edit from '../Edit/edit';
+import View from '../View/view';
 
-const Table = ({ data }) => {
+const Table = ({ data: initialData }) => {
 
-  const [tableData, setTableData] = useState(data);
+    const [data, setData] = useState(initialData); 
+    const [isEditModalOpen, setEditModalOpen] = useState(false);
+    const [isViewModalOpen, setViewModalOpen] = useState(false);
+    const [currentTruck, setCurrentTruck] = useState(null);
 
-  const handleDelete = async (id) => {
-    if (!window.confirm('Are you sure you want to delete this record?')) return;
+    const handleEdit = (truck) => {
+        setCurrentTruck(truck); // Set the truck data for editing
+        setEditModalOpen(true); // Open the modal
+    };
+
+    const handleUpdate = async (updatedTruck) => {
+        try {
+        const response = await fetch(
+            `http://localhost:8000/api/trucklog/update/${updatedTruck.id}/`,
+            {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(updatedTruck),
+            }
+        );
+
+        if (response.ok) {
+            const updatedData = await response.json();
+            setData((prevData) =>
+            prevData.map((truck) =>
+                truck.id === updatedTruck.id ? updatedData : truck
+            )
+            );
+            setEditModalOpen(false); // Close the modal
+        } else {
+            alert("Failed to update the truck.");
+        }
+        } catch (error) {
+        console.error("Error updating truck:", error);
+        alert("An error occurred while updating the truck.");
+        }
+    };
+
+    const handleDelete = async (id) => {
+      if (!window.confirm("آیا از حذف این رکورد اطمینان دارید؟")) return;
   
-    try {
-      const response = await fetch(`http://localhost:8000/api/trucklog/delete/${id}/`, {
-        method: 'DELETE',
-      });
+      const response = await fetch(
+        `http://localhost:8000/api/trucklog/delete/${id}/`,
+        {
+          method: "DELETE",
+        }
+      );
   
       if (response.ok) {
-        // Record successfully deleted
-        setData((prevData) => prevData.filter((item) => item.id !== id)); // Remove the deleted record from state
-        alert('Record deleted successfully.');
+        setData((prevData) => prevData.filter((item) => item.id !== id)); 
       } else {
-        // Error: the response is not OK, show the error
-        const errorData = await response.json();
-        alert(`Failed to delete the record: ${errorData.error}`);
+        alert("عملیات حذف رکورد ناموفق بود.");
       }
-    } catch (error) {
-      console.error('Error deleting record:', error); // Log the error for debugging
-      alert('An error occurred while deleting the record.');
-    }
-  };  
-  
+    };
 
-  const handleEdit = (id) => {
-    // Logic to open an edit form or modal (you can customize this as per your requirements)
-    alert(`Edit record with ID: ${id}`);
-  };
+    const handleView = (truck) => {
+        setCurrentTruck(truck); // Set the truck data for viewing
+        setViewModalOpen(true); // Open the view modal
+    };
 
 
+    const [visibleColumns, setVisibleColumns] = useState({
+        row: true,
+        plate: true,
+        containerCode: true,
+        loadType: true,
+        containerSize: true,
+        driverId: true,
+        weight: true,
+        seal: true,
+        imdg: true,
+        status: true,
+        logTime: true,
+        actions: true
+    });
 
-  const [visibleColumns, setVisibleColumns] = useState({
-    row: true,
-    plate: true,
-    containerCode: true,
-    loadType: true,
-    containerSize: true,
-    driverId: true,
-    weight: true,
-    seal: true,
-    imdg: true,
-    status: true,
-    logTime: true,
-    actions: true
-  });
-
-  const toggleColumnVisibility = (column) => {
-    setVisibleColumns((prevState) => ({
-      ...prevState,
-      [column]: !prevState[column]
-    }));
-  };
+    const toggleColumnVisibility = (column) => {
+        setVisibleColumns((prevState) => ({
+        ...prevState,
+        [column]: !prevState[column]
+        }));
+    };
 
   return (
     <div className="overflow-x-auto rounded-lg p-4" dir="rtl">
-      {/* Dropdown Menu for Column Visibility */}
       <div className="mb-4">
         <select
           onChange={(e) => toggleColumnVisibility(e.target.value)}
@@ -92,7 +123,7 @@ const Table = ({ data }) => {
         </select>
       </div>
 
-      <table className="min-w-full table-auto border border-gray-300">
+      <table className="min-w-full table-auto border border-gray-300 justify-center align-middle items-center">
         <thead>
           <tr className="bg-gray-300 text-center">
             {visibleColumns.row && <th className="px-4 py-2">ردیف</th>}
@@ -114,27 +145,37 @@ const Table = ({ data }) => {
             <tr key={index} className={`text-center ${index % 2 === 0 ? '' : 'bg-gray-100'}`}>
               {visibleColumns.row && <td className="px-4 py-2 align-middle">{index + 1}</td>}
               {visibleColumns.plate && (
-                <td className="px-4 py-2 align-middle" dir="ltr">
-                  <IranLicensePlate
-                    part1={item.lp_codes[0].slice(0, 2)}
-                    letter={item.lp_codes[0].slice(7)}
-                    part2={item.lp_codes[0].slice(2, 5)}
-                    code={item.lp_codes[0].slice(5, 7)}
-                    ws="150"
-                  />
+                <td className="px-4 py-2 align-middle space-y-2">
+                    {
+                        item.lp_codes.map((lpCode, index) => (
+                            <IranLicensePlate
+                            key={index}
+                            part1={lpCode.slice(0, 2)}
+                            letter={lpCode.slice(7)}
+                            part2={lpCode.slice(2, 5)}
+                            code={lpCode.slice(5, 7)}
+                            ws="150"
+                            />
+                        ))
+                    }
                 </td>
               )}
               {visibleColumns.containerCode && (
-                <td className="px-4 py-2 align-middle">
-                  <div c>
+                <td className="px-4 py-2 align-middle space-y-2">
 
-                  </div>
-                  <ContainerPlate
-                    part1={item.container_codes[0].slice(0, 4)}
-                    part2={item.container_codes[0].slice(4, 10)}
-                    part3={item.container_codes[0].slice(10, 11)}
-                    part4={item.container_codes[0].slice(11, 15)}
-                  />
+                    {
+                        item.container_codes.map((containerCode, index) => (
+                            <ContainerPlate
+                            key={index}
+                            part1={containerCode.slice(0, 4)}
+                            part2={containerCode.slice(4, 10)}
+                            part3={containerCode.slice(10, 11)}
+                            part4={containerCode.slice(11, 15)}
+                            />
+                        ))
+                    }
+
+                  
                 </td>
               )}
               {visibleColumns.loadType && <td className="px-4 py-2 align-middle">{item.load_type}</td>}
@@ -190,18 +231,19 @@ const Table = ({ data }) => {
                 </td>
               )}
               {visibleColumns.status && <td className="px-4 py-2 align-middle">{item.status}</td>}
-              {visibleColumns.logTime && <td className="px-4 py-2 align-middle">{item.log_time}</td>}
+              {visibleColumns.logTime && <td className="px-4 py-2 align-middle" dir='ltr'>{item.log_time}</td>}
               {visibleColumns.actions && (
                 <td className="px-4 py-2 align-middle">
                   <div className="flex justify-center items-center gap-2">
                     <BsEyeFill
                       className="text-green-500 cursor-pointer hover:scale-110 transition"
                       title="مشاهده"
+                      onClick={() => handleView(item)}
                     />
                     <FaEdit
                       className="text-blue-500 cursor-pointer hover:scale-110 transition"
                       title="ویرایش"
-                      onClick={() => handleEdit(item.id)}
+                      onClick={() => handleEdit(item)}
                     />
                     <FaTrashCan
                       className="text-red-500 cursor-pointer hover:scale-110 transition"
@@ -215,6 +257,22 @@ const Table = ({ data }) => {
           ))}
         </tbody>
       </table>
+      {/* Edit */}
+      {isEditModalOpen && currentTruck && (
+        <Edit
+          truck={currentTruck}
+          onClose={() => setEditModalOpen(false)}
+          onSave={handleUpdate}
+        />
+      )}
+
+      {/* View */}
+      {isViewModalOpen && currentTruck && (
+        <View
+          truck={currentTruck}
+          onClose={() => setViewModalOpen(false)} // Close the view modal
+        />
+      )}
     </div>
   );
 };
