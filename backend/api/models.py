@@ -6,11 +6,11 @@ class Truck(models.Model):
     vehicle_image_back = models.CharField(max_length=255, null=True, blank=True)
     lp_codes = models.JSONField(null=True, blank=True)
     lp_image = models.CharField(max_length=255, null=True, blank=True)
-    lp_acc = models.FloatField(null=True, blank=True)
+    lp_acc = models.JSONField(null=True, blank=True)
     plate_type = models.CharField(max_length=50, null=True, blank=True) #
     container_codes = models.JSONField(null=True, blank=True)
     container_image = models.CharField(max_length=255, null=True, blank=True)
-    container_acc = models.FloatField(null=True, blank=True)
+    container_acc = models.JSONField(null=True, blank=True)
     Container_size = models.CharField(max_length=50)
     load_type = models.CharField(max_length=50, null=True, blank=True)
     seal = models.BooleanField(default=False)
