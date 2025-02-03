@@ -2,6 +2,7 @@ from django.shortcuts import render
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
+from django.db.models import Q
 from rest_framework import status
 from .models import Truck
 from .serializers import TruckSerializer
@@ -42,9 +43,29 @@ def get_camera_videos(request):
 
 @api_view(['GET'])
 def get_truck_data(request):
-    trucks = Truck.objects.all()
+    lp_code_range = request.query_params.get('lp_code_range', None)
+    load_type = request.query_params.get('load_type', None)
+    container_size = request.query_params.get('container_size', None)
+
+    filters = {}
+
+    if lp_code_range:
+        try:
+            start, end = map(int, lp_code_range.split('-'))
+            filters['lp_codes__contains'] = [str(code) for code in range(start, end + 1)]
+        except ValueError:
+            pass
+
+    if load_type:
+        filters['load_type__icontains'] = load_type
+
+    if container_size:
+        filters['Container_size'] = container_size
+
+    trucks = Truck.objects.filter(**filters)
     serializer = TruckSerializer(trucks, many=True)
     return Response(serializer.data)
+
 
 
 @api_view(['PUT'])
@@ -78,15 +99,15 @@ def delete_truck(request, pk):
 # from api.models import Truck
 
 # Truck.objects.create(
-#     vehicle_image_front="images/luffy.jpg",
-#     vehicle_image_back="images/luffy.jpg",
-#     lp_codes=["1236915ب"],
+#     vehicle_image_front="images/front.png",
+#     vehicle_image_back="images/back.png",
+#     lp_codes=["1236914ج"],
 #     lp_image="images/lp.png",
 #     lp_acc=[70],
 #     plate_type="Iran",
-#     container_codes=["MIOU525872145G1", "BOWY525872445G1"],
+#     container_codes=["MIOU525872245G1"],
 #     container_image="images/cp.png",
-#     container_acc=[60, 80],
+#     container_acc=[60],
 #     Container_size="20 فوت",
 #     load_type="فله",
 #     seal=False,
