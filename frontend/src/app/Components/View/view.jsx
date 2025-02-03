@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react";
 const View = ({ truck, onClose }) => {
   const [isDragging, setIsDragging] = useState(false);
   const [offset, setOffset] = useState({ x: 0, y: 0 });
-  const [position, setPosition] = useState({ top: 100, left: 500 });
+  const [position, setPosition] = useState({ top: 30, left: 500 });
 
   const handleMouseDown = (e) => {
     setIsDragging(true);
@@ -62,6 +62,31 @@ const View = ({ truck, onClose }) => {
         <div className="p-6">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {/* View-Only Fields */}
+            <div>
+              <label className="block text-sm font-medium mb-2">عکس پلاک</label>
+              {truck.lp_image ? (
+                <img
+                  src={`http://localhost:8000/media/${truck.lp_image}`}
+                  alt="LP Image"
+                  className="w-full h-40 object-contain border border-gray-300 rounded-lg mb-2"
+                />
+              ) : (
+                <p className="text-gray-500">No image available</p>
+              )}
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium mb-2">عکس کانتینر</label>
+              {truck.container_image ? (
+                <img
+                  src={`http://localhost:8000/media/${truck.container_image}`}
+                  alt="Container Image"
+                  className="w-full h-40 object-contain border border-gray-300 rounded-lg mb-2"
+                />
+              ) : (
+                <p className="text-gray-500">No image available</p>
+              )}
+            </div>
             <div>
               <label className="block text-sm font-medium mb-2">پلاک</label>
               <input

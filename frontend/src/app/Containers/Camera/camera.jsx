@@ -5,7 +5,7 @@ import Camera_Card from '@/app/Components/Cards/Camera/camera_card';
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 
 const Camera = () => {
-  
+
     const [videos, setVideos] = useState([]);
 
     useEffect(() => {
@@ -20,13 +20,13 @@ const Camera = () => {
             setLoading(false);
           }
         };
-    
+
         fetchVideos();
       }, []);
 
     const handleDragEnd = (result) => {
         const { source, destination } = result;
-        
+
         // If dropped outside the list, do nothing
         if (!destination) return;
 

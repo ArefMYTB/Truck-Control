@@ -159,7 +159,7 @@ const Current = ({ data: initialData }) => {
                                 <img
                                     src={`http://localhost:8000/media/${data.vehicle_image_front}`}
                                     alt="Front Truck"
-                                    className="w-[100px] h-[100] rounded-lg"
+                                    className="w-[200px] h-[150] rounded-lg"
                                 />
                                 {/* <Image
                                     src={images.user}
@@ -173,7 +173,7 @@ const Current = ({ data: initialData }) => {
                                 <img
                                     src={`http://localhost:8000/media/${data.vehicle_image_back}`}
                                     alt="Back Truck"
-                                    className="w-[100px] h-[100] rounded-lg"
+                                    className="w-[200px] h-[150] rounded-lg"
                                 />
                                 {/* <Image
                                     src={images.user}
@@ -231,7 +231,7 @@ const Current = ({ data: initialData }) => {
                             <div className="flex items-center gap-1">
                                 <div
                                 className={`w-4 h-4 rounded-full ${
-                                    data.seal ? 'bg-green-500' : 'bg-gray-300'
+                                    data.seal ? 'bg-green-500' : 'bg-gray-100'
                                 } border`}
                                 ></div>
                                 <span>دارد</span>
@@ -239,7 +239,7 @@ const Current = ({ data: initialData }) => {
                             <div className="flex items-center gap-1">
                                 <div
                                 className={`w-4 h-4 rounded-full ${
-                                    !data.seal ? 'bg-red-500' : 'bg-gray-300'
+                                    !data.seal ? 'bg-red-500' : 'bg-gray-100'
                                 } border`}
                                 ></div>
                                 <span>ندارد</span>
@@ -251,7 +251,7 @@ const Current = ({ data: initialData }) => {
                             <div className="flex items-center gap-1">
                                 <div
                                 className={`w-4 h-4 rounded-full ${
-                                    data.imdg ? 'bg-green-500' : 'bg-gray-300'
+                                    data.imdg ? 'bg-green-500' : 'bg-gray-100'
                                 } border`}
                                 ></div>
                                 <span>هست</span>
@@ -259,7 +259,7 @@ const Current = ({ data: initialData }) => {
                             <div className="flex items-center gap-1">
                                 <div
                                 className={`w-4 h-4 rounded-full ${
-                                    !data.imdg ? 'bg-red-500' : 'bg-gray-300'
+                                    !data.imdg ? 'bg-red-500' : 'bg-gray-100'
                                 } border`}
                                 ></div>
                                 <span>نیست</span>
@@ -302,7 +302,7 @@ const Current = ({ data: initialData }) => {
 
                     <div className="grid">
                         <span className="text-center">عملیات</span>
-                        <div className="mb-4 flex flex-col items-center justify-center gap-y-3 bg-gray-100 p-2 rounded">
+                        <div className="mb-2 flex flex-col items-center justify-center gap-y-4 bg-gray-200 p-2 rounded">
                             <BsEyeFill
                                 className="text-green-500 text-2xl cursor-pointer hover:scale-110 transition"
                                 title="مشاهده"

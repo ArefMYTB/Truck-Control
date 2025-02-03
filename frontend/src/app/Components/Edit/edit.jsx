@@ -1,10 +1,14 @@
 import React, { useState, useEffect } from "react";
+import IranLicensePlate from "../Plate/License_Plate/Iran/lp";
+import ContainerPlate from "../Plate/Container_Plate/cp";
 
 const Edit = ({ truck, onClose, onSave }) => {
   const [formData, setFormData] = useState(truck);
   const [isDragging, setIsDragging] = useState(false);
   const [offset, setOffset] = useState({ x: 0, y: 0 });
-  const [position, setPosition] = useState({ top: 100, left: 500 });
+  const [position, setPosition] = useState({ top: 10, left: 500 });
+  const [selectedLpCode, setSelectedLpCode] = useState(null);
+  const [selectedContainerCode, setSelectedContainerCode] = useState(null);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -23,10 +27,29 @@ const Edit = ({ truck, onClose, onSave }) => {
     }
   };
 
+  const handlePlateSelection = (type, plate) => {
+    if (type === "lp") {
+      setSelectedLpCode(plate);
+    } else if (type === "container") {
+      setSelectedContainerCode(plate);
+    }
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
-    onSave(formData);
+  
+    // Check if any plate is selected. If not, keep all plates unchanged.
+    const updatedData = {
+      ...formData,
+      lp_codes: selectedLpCode ? [selectedLpCode] : formData.lp_codes,
+      container_codes: selectedContainerCode
+        ? [selectedContainerCode]
+        : formData.container_codes,
+    };
+  
+    onSave(updatedData);
   };
+  
 
   const handleMouseDown = (e) => {
     setIsDragging(true);
@@ -72,8 +95,18 @@ const Edit = ({ truck, onClose, onSave }) => {
     };
   }, [isDragging]);
 
+  useEffect(() => {
+    // Automatically select the first plate if only one exists
+    if (formData.lp_codes?.length === 1) {
+      setSelectedLpCode(formData.lp_codes[0]);
+    }
+    if (formData.container_codes?.length === 1) {
+      setSelectedContainerCode(formData.container_codes[0]);
+    }
+  }, [formData.lp_codes, formData.container_codes]);
+
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-gray-500 bg-opacity-50">
+    <div className="fixed inset-0 overflow-auto flex items-center justify-center bg-gray-500 bg-opacity-50">
       <div
         className="bg-white p-6 rounded-lg w-2/3 max-w-4xl"
         style={{
@@ -93,48 +126,113 @@ const Edit = ({ truck, onClose, onSave }) => {
         <form onSubmit={handleSubmit} className="p-6">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {/* Editable Fields */}
-            <div>
-              <label className="block text-sm font-medium mb-2">کد پلاک</label>
-              <input
-                type="text"
-                name="lp_codes"
-                value={formData.lp_codes ? formData.lp_codes.join(", ") : ""}
-                onChange={handleChange}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-            </div>
 
             <div>
               <label className="block text-sm font-medium mb-2">عکس پلاک</label>
+              {formData.lp_image ? (
+                <img
+                  src={`http://localhost:8000/media/${formData.lp_image}`}
+                  alt="LP Image"
+                  className="w-full h-40 object-contain border border-gray-300 rounded-lg mb-2"
+                />
+              ) : (
+                <p className="text-gray-500">No image available</p>
+              )}
               <input
                 type="text"
                 name="lp_image"
                 value={formData.lp_image || ""}
-                onChange={handleChange}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium mb-2">کد کانتینر</label>
-              <input
-                type="text"
-                name="container_codes"
-                value={formData.container_codes ? formData.container_codes.join(", ") : ""}
-                onChange={handleChange}
+                readOnly
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
 
             <div>
               <label className="block text-sm font-medium mb-2">عکس کانتینر</label>
+              {formData.container_image ? (
+                <img
+                  src={`http://localhost:8000/media/${formData.container_image}`}
+                  alt="Container Image"
+                  className="w-full h-40 object-contain border border-gray-300 rounded-lg mb-2"
+                />
+              ) : (
+                <p className="text-gray-500">No image available</p>
+              )}
               <input
                 type="text"
                 name="container_image"
                 value={formData.container_image || ""}
-                onChange={handleChange}
+                readOnly
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium mb-2">کد پلاک</label>
+              {formData.lp_codes?.length > 1 ? (
+                <div className="space-y-2">
+                  {formData.lp_codes.map((lp) => (
+                    <div
+                      key={lp}
+                      className={`cursor-pointer p-2 rounded-md border ${
+                        lp === selectedLpCode ? "bg-blue-500 text-white" : "bg-gray-100"
+                      }`}
+                      onClick={() => handlePlateSelection("lp", lp)}
+                    >
+                      <IranLicensePlate
+                        part1={lp.slice(0, 2)}
+                        letter={lp.slice(7)}
+                        part2={lp.slice(2, 5)}
+                        code={lp.slice(5, 7)}
+                        ws={200}
+                      />
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <input
+                  type="text"
+                  name="lp_codes"
+                  value={formData.lp_codes ? formData.lp_codes.join(", ") : ""}
+                  onChange={handleChange}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+                />
+              )}
+            </div>
+
+            {/* Container Plate Selection */}
+            <div>
+              <label className="block text-sm font-medium mb-2">کد کانتینر</label>
+              {formData.container_codes?.length > 1 ? (
+                <div className="space-y-2">
+                  {formData.container_codes.map((container) => (
+                    <div
+                      key={container}
+                      className={`cursor-pointer p-2 rounded-md border ${
+                        container === selectedContainerCode
+                          ? "bg-blue-500 text-white"
+                          : "bg-gray-100"
+                      }`}
+                      onClick={() => handlePlateSelection("container", container)}
+                    >
+                      <ContainerPlate
+                        part1={container.slice(0, 4)}
+                        part2={container.slice(4, 10)}
+                        part3={container.slice(10, 11)}
+                        part4={container.slice(11, 15)}
+                      />
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <input
+                  type="text"
+                  name="container_codes"
+                  value={formData.container_codes ? formData.container_codes.join(", ") : ""}
+                  onChange={handleChange}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+                />
+              )}
             </div>
 
             <div>
