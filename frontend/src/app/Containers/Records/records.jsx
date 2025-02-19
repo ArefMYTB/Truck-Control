@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { FaSyncAlt, FaDownload } from "react-icons/fa";
 import "./records.scss";
 import Table from "@/app/Components/Table/table";
@@ -9,10 +9,15 @@ const Records = () => {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  // const [newTruckData, setNewTruckData] = useState([]);
+  const socketRef = useRef(null); // Store the WebSocket connection
 
   const [showFilters, setShowFilters] = useState(false); // For showing/hiding filters
   const [filters, setFilters] = useState({
-    lpCodeRange: "",
+    lpCode: "",
+    containerCode: "",
+    containerPrefix: "", // First four letters
+    containerNumber: "", // Next six numbers
     loadType: "",
     containerSize: "",
   }); // Filters state
@@ -25,8 +30,17 @@ const Records = () => {
       const params = new URLSearchParams();
 
       // Add filters to the query string if they're set
-      if (appliedFilters.lpCodeRange) {
-        params.append("lp_code_range", appliedFilters.lpCodeRange);
+      if (appliedFilters.lpCode) {
+        params.append("lp_codes", appliedFilters.lpCode);
+      }
+      if (appliedFilters.containerCode) {
+        params.append("container_codes", appliedFilters.containerCode);
+      }
+      if (appliedFilters.containerPrefix) {
+        params.append("container_prefix", appliedFilters.containerPrefix);
+      }
+      if (appliedFilters.containerNumber) {
+        params.append("container_number", appliedFilters.containerNumber);
       }
       if (appliedFilters.loadType) {
         params.append("load_type", appliedFilters.loadType);
@@ -57,6 +71,23 @@ const Records = () => {
       fetchData({});
     }
   }, [filterApplied]);
+
+  useEffect(() => {
+    // Establish WebSocket connection when the component mounts
+    const socket = new WebSocket('ws://127.0.0.1:8000/ws/newtruck/ai/');
+    socketRef.current = socket;
+
+    // Define what happens when a message is received
+    socket.onmessage = (event) => {
+      fetchData({});
+    };
+
+    // Handle WebSocket connection closing
+    socket.onclose = (event) => {
+        console.error('WebSocket connection closed unexpectedly:', event);
+    };
+
+  }, []);
 
   if (loading) {
     return <div>در حال بارگذاری...</div>;
@@ -106,22 +137,68 @@ const Records = () => {
           {/* Filter Section */}
           {showFilters && (
             <div className="filter-options my-4 p-4 bg-gray-100 rounded-lg shadow-sm">
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                {/* LP Code Range */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4" dir="rtl">
+                {/* LP Code */}
                 <div>
                   <label className="block text-gray-700 text-sm mb-2">
-                    محدوده کد LP
+                    کد پلاک
                   </label>
                   <input
                     type="text"
-                    value={filters.lpCodeRange}
+                    value={filters.lpCode}
                     onChange={(e) =>
-                      setFilters({ ...filters, lpCodeRange: e.target.value })
+                      setFilters({ ...filters, lpCode: e.target.value })
                     }
                     className="w-full px-3 py-2 border rounded-lg"
-                    placeholder="برای مثال 10"
+                    placeholder="برای مثال 52n11"
                   />
                 </div>
+
+                {/* Container Code */}
+                <div>
+                  <label className="block text-gray-700 text-sm mb-2">
+                    کد کانتینر
+                  </label>
+                  <input
+                    type="text"
+                    value={filters.containerCode}
+                    onChange={(e) =>
+                      setFilters({ ...filters, containerCode: e.target.value })
+                    }
+                    className="w-full px-3 py-2 border rounded-lg"
+                    placeholder="برای مثال MIOU5258722"
+                  />
+                </div>
+
+                {/* <div>
+                  <label className="block text-gray-700 text-sm mb-2">
+                    کد بخش اول کانتینر
+                  </label>
+                  <input
+                    type="text"
+                    value={filters.containerPrefix}
+                    onChange={(e) =>
+                      setFilters({ ...filters, containerPrefix: e.target.value })
+                    }
+                    className="w-full px-3 py-2 border rounded-lg"
+                    placeholder="برای مثال MIOU5258722"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-gray-700 text-sm mb-2">
+                    کد بخش دوم کانتینر
+                  </label>
+                  <input
+                    type="text"
+                    value={filters.containerNumber}
+                    onChange={(e) =>
+                      setFilters({ ...filters, containerNumber: e.target.value })
+                    }
+                    className="w-full px-3 py-2 border rounded-lg"
+                    placeholder="برای مثال MIOU5258722"
+                  />
+                </div> */}
 
                 {/* Load Type */}
                 <div>
@@ -135,7 +212,7 @@ const Records = () => {
                       setFilters({ ...filters, loadType: e.target.value })
                     }
                     className="w-full px-3 py-2 border rounded-lg"
-                    placeholder="برای مثال غذا"
+                    placeholder="برای مثال فله"
                   />
                 </div>
 

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import IranLicensePlate from "@/app/Components/Plate/License_Plate/Iran/lp";
 import ContainerPlate from "@/app/Components/Plate/Container_Plate/cp";
 import { FaEdit } from 'react-icons/fa';
@@ -79,7 +79,7 @@ const Current = ({ data: initialData }) => {
                         <span>پلاک</span>
                         <div className="flex">
                         <img
-                            src={`http://localhost:8000/media/${data.lp_image}`}
+                            src={`http://localhost:8000/media/${data?.lp_image}`}
                             alt="License Plate"
                             className="w-[150px]"
                         />
@@ -90,19 +90,16 @@ const Current = ({ data: initialData }) => {
                             /> */}
                         </div>
                         {
-                            data.lp_codes.map((lpCode, index) => (
+                            data?.lp_codes?.map((lpCode, index) => (
                                 <div key={index}>
                                     <IranLicensePlate
                                     key={index}
-                                    part1={lpCode.slice(0, 2)}
-                                    letter={lpCode.slice(7)}
-                                    part2={lpCode.slice(2, 5)}
-                                    code={lpCode.slice(5, 7)}
+                                    lpCode={lpCode}
                                     ws="150"
                                     />
-                                    {data.lp_acc && data.lp_acc[index] && (
+                                    {data?.lp_acc && data?.lp_acc[index] && (
                                         <div className="flex-grow flex justify-between items-center text-[10px] mt-2">
-                                        <span>درصد تشخیص: <span className="text-green-500">{data.lp_acc[index]}%</span></span>
+                                        <span>درصد تشخیص: <span className="text-green-500">{data?.lp_acc[index]}%</span></span>
                                         <div className="flex items-center text-[#042973]">
                                             <FaEdit className="ml-1" />
                                             <span>ویرایش</span>
@@ -119,7 +116,7 @@ const Current = ({ data: initialData }) => {
                         <span>کد کانتینر</span>
                         <div className="flex">
                             <img
-                                src={`http://localhost:8000/media/${data.container_image}`}
+                                src={`http://localhost:8000/media/${data?.container_image}`}
                                 alt="Container Code"
                                 className="w-[150px]"
                             />
@@ -130,7 +127,7 @@ const Current = ({ data: initialData }) => {
                             /> */}
                         </div>
                         {
-                            data.container_codes.map((containerCode, index) => (
+                            data?.container_codes?.map((containerCode, index) => (
                                 <div key={index}>
                                 <ContainerPlate
                                     part1={containerCode.slice(0, 4)}
@@ -138,9 +135,9 @@ const Current = ({ data: initialData }) => {
                                     part3={containerCode.slice(10, 11)}
                                     part4={containerCode.slice(11, 15)}
                                 />
-                                {data.container_acc && data.container_acc[index] && (
+                                {data?.container_acc && data?.container_acc[index] && (
                                     <div className="flex-grow flex justify-between items-center text-[10px] mt-2">
-                                    <span>درصد تشخیص: <span className="text-green-500">{data.container_acc[index]}%</span></span>
+                                    <span>درصد تشخیص: <span className="text-green-500">{data?.container_acc[index]}%</span></span>
                                     <div className="flex items-center text-[#042973]">
                                         <FaEdit className="ml-1" />
                                         <span>ویرایش</span>
@@ -157,7 +154,7 @@ const Current = ({ data: initialData }) => {
                         <div className="flex justify-center gap-2">
                             <div className="flex flex-col items-center">
                                 <img
-                                    src={`http://localhost:8000/media/${data.vehicle_image_front}`}
+                                    src={`http://localhost:8000/media/${data?.vehicle_image_front}`}
                                     alt="Front Truck"
                                     className="w-[200px] h-[150] rounded-lg"
                                 />
@@ -171,7 +168,7 @@ const Current = ({ data: initialData }) => {
                             </div>
                             <div className="flex flex-col items-center">
                                 <img
-                                    src={`http://localhost:8000/media/${data.vehicle_image_back}`}
+                                    src={`http://localhost:8000/media/${data?.vehicle_image_back}`}
                                     alt="Back Truck"
                                     className="w-[200px] h-[150] rounded-lg"
                                 />
@@ -190,7 +187,7 @@ const Current = ({ data: initialData }) => {
                         <span className="text-center"> احراز هویت</span>
                         <div className="flex flex-col items-center">
                             <img
-                                src={`http://localhost:8000/media/${data.driver_face}`}
+                                src={`http://localhost:8000/media/${data?.driver_face}`}
                                 alt="Driver Image"
                                 className="w-[100px] h-[100] rounded-lg"
                             />
@@ -205,7 +202,7 @@ const Current = ({ data: initialData }) => {
                             {/* Confirmation Rectangle */}
                             <div
                                 className={`mt-2 h-8 flex items-center justify-center text-white font-semibold rounded-md ${
-                                data.driver_confirmed ? 'bg-green-500' : 'bg-red-500'
+                                data?.driver_confirmed === true ? 'bg-green-500' : data?.driver_confirmed === false ? 'bg-red-500' : ''
                                 }`}
                                 style={{ width: 100 }} // Dynamically set the width of the rectangle
                             >
@@ -217,11 +214,11 @@ const Current = ({ data: initialData }) => {
                     <div className="grid mr-4">
                         <span>نوع بار</span>
                         <div className="mt-1 w-40 h-10 bg-gray-300 flex items-center justify-center rounded-md">
-                            <p className="text-sm text-gray-700 text-right w-full mr-4">{data.load_type}</p>
+                            <p className="text-sm text-gray-700 text-right w-full mr-4">{data?.load_type}</p>
                         </div>
                         <span>آیدی رانندی</span>
                         <div className="mt-1 w-40 h-10 bg-gray-300 flex items-center justify-center rounded-md">
-                            <p className="text-sm text-gray-700 text-right w-full mr-4">{data.driver_id}</p>
+                            <p className="text-sm text-gray-700 text-right w-full mr-4">{data?.driver_id}</p>
                         </div>
                     </div>
 
@@ -230,17 +227,17 @@ const Current = ({ data: initialData }) => {
                         <div className="mt-1 w-40 h-10 bg-gray-300 flex items-center justify-center rounded-md gap-4">
                             <div className="flex items-center gap-1">
                                 <div
-                                className={`w-4 h-4 rounded-full ${
-                                    data.seal ? 'bg-green-500' : 'bg-gray-100'
-                                } border`}
+                                    className={`w-4 h-4 rounded-full ${
+                                        data?.seal === true ? 'bg-green-500' : data?.seal === false ? 'bg-gray-100' : ''
+                                    } border`}
                                 ></div>
                                 <span>دارد</span>
                             </div>
                             <div className="flex items-center gap-1">
                                 <div
-                                className={`w-4 h-4 rounded-full ${
-                                    !data.seal ? 'bg-red-500' : 'bg-gray-100'
-                                } border`}
+                                    className={`w-4 h-4 rounded-full ${
+                                        data?.seal === false ? 'bg-red-500' : data?.seal === true ? 'bg-gray-100' : ''
+                                    } border`}
                                 ></div>
                                 <span>ندارد</span>
                             </div>
@@ -251,7 +248,7 @@ const Current = ({ data: initialData }) => {
                             <div className="flex items-center gap-1">
                                 <div
                                 className={`w-4 h-4 rounded-full ${
-                                    data.imdg ? 'bg-green-500' : 'bg-gray-100'
+                                    data?.imdg === true ? 'bg-green-500' : data?.imdg === false ? 'bg-gray-100' : ''
                                 } border`}
                                 ></div>
                                 <span>هست</span>
@@ -259,7 +256,7 @@ const Current = ({ data: initialData }) => {
                             <div className="flex items-center gap-1">
                                 <div
                                 className={`w-4 h-4 rounded-full ${
-                                    !data.imdg ? 'bg-red-500' : 'bg-gray-100'
+                                    data?.imdg === false ? 'bg-red-500' : data?.imdg === true ? 'bg-gray-100' : ''
                                 } border`}
                                 ></div>
                                 <span>نیست</span>
@@ -270,33 +267,33 @@ const Current = ({ data: initialData }) => {
                     <div className="grid mr-4">
                         <span>سایز کانتینر</span>
                         <div className="mt-1 w-40 h-10 bg-gray-300 flex items-center justify-center rounded-md">
-                            <p className="text-sm text-gray-700 text-right w-full mr-4">{data.Container_size}</p>
+                            <p className="text-sm text-gray-700 text-right w-full mr-4">{data?.Container_size}</p>
                         </div>
                         <span>وزن</span>
                         <div className="mt-1 w-40 h-10 bg-gray-300 flex items-center justify-center rounded-md">
-                            <p className="text-sm text-gray-700 text-right w-full mr-4">{data.weight}</p>
+                            <p className="text-sm text-gray-700 text-right w-full mr-4">{data?.weight}</p>
                         </div>
                     </div>
 
                     <div className="grid mr-4">
                         <span>تاریخ عبور</span>
                         <div className="mt-1 w-40 h-10 bg-gray-300 flex items-center justify-center rounded-md">
-                            <p className="text-sm text-gray-700 text-right w-full mr-4" dir="ltr">{data.log_time}</p>
+                            <p className="text-sm text-gray-700 text-right w-full mr-4" dir="ltr">{data?.log_time}</p>
                         </div>
                         <span>وضعیت</span>
                         <div className="mt-1 w-40 h-10 bg-gray-300 flex items-center justify-center rounded-md">
-                            <p className="text-sm text-gray-700 text-right w-full mr-4">{data.status}</p>
+                            <p className="text-sm text-gray-700 text-right w-full mr-4">{data?.status}</p>
                         </div>
                     </div>
 
 {/*                     <div className="grid mr-4"> */}
 {/*                         <span>تاریخ فاکتور</span> */}
 {/*                         <div className="mt-1 w-40 h-10 bg-gray-300 flex items-center justify-center rounded-md"> */}
-{/*                             <p className="text-sm text-gray-700 text-right w-full mr-4">{data.invoice_date}</p> */}
+{/*                             <p className="text-sm text-gray-700 text-right w-full mr-4">{data?.invoice_date}</p> */}
 {/*                         </div> */}
 {/*                         <span>نوع کالا</span> */}
 {/*                         <div className="mt-1 w-40 h-10 bg-gray-300 flex items-center justify-center rounded-md"> */}
-{/*                             <p className="text-sm text-gray-700 text-right w-full mr-4">{data.goods_type}</p> */}
+{/*                             <p className="text-sm text-gray-700 text-right w-full mr-4">{data?.goods_type}</p> */}
 {/*                         </div> */}
 {/*                     </div> */}
 
@@ -316,7 +313,7 @@ const Current = ({ data: initialData }) => {
                             <FaTrashCan
                                 className="text-red-500 text-2xl cursor-pointer hover:scale-110 transition"
                                 title="حذف"
-                                onClick={() => handleDelete(data.id)}
+                                onClick={() => handleDelete(data?.id)}
                             />
                         </div>
                     </div>

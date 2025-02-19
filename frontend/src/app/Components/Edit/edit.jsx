@@ -180,10 +180,7 @@ const Edit = ({ truck, onClose, onSave }) => {
                       onClick={() => handlePlateSelection("lp", lp)}
                     >
                       <IranLicensePlate
-                        part1={lp.slice(0, 2)}
-                        letter={lp.slice(7)}
-                        part2={lp.slice(2, 5)}
-                        code={lp.slice(5, 7)}
+                        lpCode={lp}
                         ws={200}
                       />
                     </div>

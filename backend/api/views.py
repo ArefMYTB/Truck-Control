@@ -6,6 +6,47 @@ from django.db.models import Q
 from rest_framework import status
 from .models import Truck
 from .serializers import TruckSerializer
+import random
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+import json
+from django.contrib.auth import authenticate, login as auth_login
+from .forms import LoginForm
+from captcha.models import CaptchaStore
+from captcha.helpers import captcha_image_url
+from django.shortcuts import render
+
+
+@csrf_exempt
+def refresh_captcha(request):
+    if request.method == 'GET':
+        new_key = CaptchaStore.generate_key()
+        new_image = captcha_image_url(new_key)
+        return JsonResponse({'image': new_image, 'key': new_key})
+    return JsonResponse({'error': 'Invalid request'}, status=400)
+
+
+@csrf_exempt
+def login(request):
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            form = LoginForm(data)
+            if form.is_valid():
+                username = data.get('username')
+                password = data.get('password')
+
+                user = authenticate(username=username, password=password)
+                if user:
+                    auth_login(request, user)  # Logs in the user
+                    return JsonResponse({'is_valid': True, 'message': 'Login successful'})
+                else:
+                    return JsonResponse({'is_valid': False, 'message': 'Invalid credentials'})
+            else:
+                return JsonResponse({'is_valid': False, 'errors': form.errors})
+        except Exception as e:
+            return JsonResponse({'error': 'Invalid request', 'details': str(e)}, status=400)
+    return JsonResponse({'error': 'Invalid request'}, status=400)
 
 
 @api_view(['GET'])
@@ -28,7 +69,6 @@ def get_dashboard_data(request):
 
     return Response(response_data)
 
-
 @api_view(['GET'])
 def get_camera_videos(request):
     video_data = [
@@ -43,18 +83,14 @@ def get_camera_videos(request):
 
 @api_view(['GET'])
 def get_truck_data(request):
-    lp_code_range = request.query_params.get('lp_code_range', None)
     load_type = request.query_params.get('load_type', None)
     container_size = request.query_params.get('container_size', None)
+    lp_codes = request.query_params.get('lp_codes', None)
+    container_codes = request.query_params.get('container_codes', None)
+    # container_prefix = request.query_params.get('container_prefix', None)
+    # container_number = request.query_params.get('container_number', None)
 
     filters = {}
-
-    if lp_code_range:
-        try:
-            start, end = map(int, lp_code_range.split('-'))
-            filters['lp_codes__contains'] = [str(code) for code in range(start, end + 1)]
-        except ValueError:
-            pass
 
     if load_type:
         filters['load_type__icontains'] = load_type
@@ -63,9 +99,15 @@ def get_truck_data(request):
         filters['Container_size'] = container_size
 
     trucks = Truck.objects.filter(**filters)
+
+    if lp_codes:
+        trucks = trucks.filter(lp_codes__icontains=lp_codes)
+
+    if container_codes:
+        trucks = trucks.filter(container_codes__icontains=container_codes)
+
     serializer = TruckSerializer(trucks, many=True)
     return Response(serializer.data)
-
 
 
 @api_view(['PUT'])
@@ -101,7 +143,7 @@ def delete_truck(request, pk):
 # Truck.objects.create(
 #     vehicle_image_front="images/front.png",
 #     vehicle_image_back="images/back.png",
-#     lp_codes=["1236914ج"],
+#     lp_codes=["5n1142"],
 #     lp_image="images/lp.png",
 #     lp_acc=[70],
 #     plate_type="Iran",
@@ -119,3 +161,11 @@ def delete_truck(request, pk):
 #     status="تست",
 #     weight="200kg"
 # )
+
+# curl -X POST ws://localhost:8000/ws/api/receivelicenseplatedata/ \
+#      -H "Content-Type: application/json" \
+#      -d '{
+#            "lp_codes": ["14ein15536"],
+#            "lp_image": "images/lp.png",
+#            "vehicle_image_front": "images/front.png"
+#          }'

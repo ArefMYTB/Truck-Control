@@ -150,10 +150,7 @@ const Table = ({ data: initialData }) => {
                         item.lp_codes.map((lpCode, index) => (
                             <IranLicensePlate
                             key={index}
-                            part1={lpCode.slice(0, 2)}
-                            letter={lpCode.slice(7)}
-                            part2={lpCode.slice(2, 5)}
-                            code={lpCode.slice(5, 7)}
+                            lpCode={lpCode}
                             ws="150"
                             />
                         ))
