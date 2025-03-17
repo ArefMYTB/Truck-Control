@@ -26,7 +26,7 @@ const Records = () => {
   const fetchData = async (appliedFilters) => {
     setLoading(true);
     try {
-      let url = "http://localhost:8000/api/trucklog/";
+      let url = "http://46.148.36.110:226/api/trucklog/";
       const params = new URLSearchParams();
 
       // Add filters to the query string if they're set
@@ -74,7 +74,7 @@ const Records = () => {
 
   useEffect(() => {
     // Establish WebSocket connection when the component mounts
-    const socket = new WebSocket('ws://127.0.0.1:8000/ws/newtruck/ai/');
+    const socket = new WebSocket('ws://46.148.36.110:226/ws/newtruck/ai/');
     socketRef.current = socket;
 
     // Define what happens when a message is received

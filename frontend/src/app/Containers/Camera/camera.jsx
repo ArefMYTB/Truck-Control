@@ -1,70 +1,77 @@
-"use client";
-import React, { useEffect, useState } from 'react';
-import './camera.scss';
+import React, { useEffect, useRef } from "react";
+import videojs from "video.js";
+import "video.js/dist/video-js.css";
 import Camera_Card from '@/app/Components/Cards/Camera/camera_card';
-import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 
 const Camera = () => {
-
-    const [videos, setVideos] = useState([]);
+    const container_videoRef = useRef(null);
+    const plate_videoRef = useRef(null);
+    const face_videoRef = useRef(null);
 
     useEffect(() => {
-        const fetchVideos = async () => {
-          try {
-            const response = await fetch("http://localhost:8000/api/videos/");
-            if (!response.ok) throw new Error("Failed to fetch videos");
-            const data = await response.json();
-            setVideos(data);
-          } catch (error) {
-            console.error("Error fetching video data:", error);
-            setLoading(false);
-          }
+        const container_player = videojs(container_videoRef.current, {
+            controls: true,
+            autoplay: true,
+            fluid: true,
+            preload: 'auto',
+            liveui: true,
+            sources: [{
+                src: "/stream_container.m3u8",
+                type: "application/x-mpegURL"
+            }]
+        });
+
+        return () => {
+            if (container_player) {
+                container_player.dispose();
+            }
         };
+    }, []);
 
-        fetchVideos();
-      }, []);
+    useEffect(() => {
+        const plate_player = videojs(plate_videoRef.current, {
+            controls: true,
+            autoplay: true,
+            fluid: true,
+            sources: [{
+                src: "/stream_plate.m3u8",
+                type: "application/x-mpegURL"
+            }]
+        });
 
-    const handleDragEnd = (result) => {
-        const { source, destination } = result;
+        return () => {
+            if (plate_player) {
+                plate_player.dispose();
+            }
+        };
+    }, []);
 
-        // If dropped outside the list, do nothing
-        if (!destination) return;
+    useEffect(() => {
+        const face_player = videojs(face_videoRef.current, {
+            controls: true,
+            autoplay: true,
+            fluid: true,
+            sources: [{
+                src: "/stream_face.m3u8",
+                type: "application/x-mpegURL"
+            }]
+        });
 
-        // Reorder the items
-        const reorderedVideos = Array.from(videos);
-        const [removed] = reorderedVideos.splice(source.index, 1);
-        reorderedVideos.splice(destination.index, 0, removed);
+        return () => {
+            if (face_player) {
+                face_player.dispose();
+            }
+        };
+    }, []);
 
-        setVideos(reorderedVideos);
-    };
 
     return (
-        <DragDropContext onDragEnd={handleDragEnd}>
-            <Droppable droppableId="video-list" direction="horizontal">
-                {(provided) => (
-                <div
-                    className="camera-section"
-                    ref={provided.innerRef}
-                    {...provided.droppableProps}
-                >
-                    {videos.map((video, index) => (
-                    <Draggable key={video.id} draggableId={video.id} index={index}>
-                        {(provided) => (
-                        <div
-                            ref={provided.innerRef}
-                            {...provided.draggableProps}
-                            {...provided.dragHandleProps}
-                        >
-                            <Camera_Card title={video.title} videoSrc={video.video_src} />
-                        </div>
-                        )}
-                    </Draggable>
-                    ))}
-                    {provided.placeholder}
-                </div>
-                )}
-            </Droppable>
-        </DragDropContext>
+        <div className="m-4 flex items-center justify-center gap-5">
+            <Camera_Card title={"دوربین کانتینر"} videoSrc={container_videoRef}/>
+            <Camera_Card title={"دوربین پلاک خوان"} videoSrc={plate_videoRef}/>
+            <Camera_Card title={"دوربین تشخیص چهره"} videoSrc={face_videoRef}/>
+            
+        </div>
     );
 };
 

@@ -25,8 +25,10 @@ const Navbar = ({ isSidebarOpen, toggleSidebar }) => {
 
   const handleLogout = () => {
     localStorage.removeItem("authToken");
-    window.location.href = "/"; // Redirect after logout
-  };
+    if (typeof window !== 'undefined') {
+      window.location.href = "/"; // Only access window on the client
+    }
+  };  
 
   return (
     <div className="navbar">

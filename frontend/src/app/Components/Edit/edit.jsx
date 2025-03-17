@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import IranLicensePlate from "../Plate/License_Plate/Iran/lp";
+import AfghanLicensePlate from "../Plate/License_Plate/Afghan/lp";
 import ContainerPlate from "../Plate/Container_Plate/cp";
 
 const Edit = ({ truck, onClose, onSave }) => {
@@ -131,7 +132,7 @@ const Edit = ({ truck, onClose, onSave }) => {
               <label className="block text-sm font-medium mb-2">عکس پلاک</label>
               {formData.lp_image ? (
                 <img
-                  src={`http://localhost:8000/media/${formData.lp_image}`}
+                  src={`http://46.148.36.110:226/api/media/${formData.lp_image}`}
                   alt="LP Image"
                   className="w-full h-40 object-contain border border-gray-300 rounded-lg mb-2"
                 />
@@ -151,7 +152,7 @@ const Edit = ({ truck, onClose, onSave }) => {
               <label className="block text-sm font-medium mb-2">عکس کانتینر</label>
               {formData.container_image ? (
                 <img
-                  src={`http://localhost:8000/media/${formData.container_image}`}
+                  src={`http://46.148.36.110:226/api/media/${formData.container_image}`}
                   alt="Container Image"
                   className="w-full h-40 object-contain border border-gray-300 rounded-lg mb-2"
                 />
@@ -169,9 +170,9 @@ const Edit = ({ truck, onClose, onSave }) => {
 
             <div>
               <label className="block text-sm font-medium mb-2">کد پلاک</label>
-              {formData.lp_codes?.length > 1 ? (
+              {formData?.lp_codes?.length > 1 ? (
                 <div className="space-y-2">
-                  {formData.lp_codes.map((lp) => (
+                  {formData?.lp_codes.map((lp) => (
                     <div
                       key={lp}
                       className={`cursor-pointer p-2 rounded-md border ${
@@ -179,10 +180,11 @@ const Edit = ({ truck, onClose, onSave }) => {
                       }`}
                       onClick={() => handlePlateSelection("lp", lp)}
                     >
-                      <IranLicensePlate
-                        lpCode={lp}
-                        ws={200}
-                      />
+                      {formData.plate_type === "Iran" ? (
+                          <IranLicensePlate lpCode={lp} ws="200" />
+                      ) : formData.plate_type === "Afghan" ? (
+                          <AfghanLicensePlate lpCode={lp} ws="200" />
+                      ) : null}
                     </div>
                   ))}
                 </div>

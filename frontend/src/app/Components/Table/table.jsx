@@ -5,6 +5,7 @@ import { FaTrashCan } from 'react-icons/fa6';
 import { BsEyeFill } from 'react-icons/bs';
 import { BsInfoCircleFill } from 'react-icons/bs';
 import IranLicensePlate from "@/app/Components/Plate/License_Plate/Iran/lp"
+import AfghanLicensePlate from '../Plate/License_Plate/Afghan/lp';
 import ContainerPlate from "@/app/Components/Plate/Container_Plate/cp"
 import Edit from '../Edit/edit';
 import View from '../View/view';
@@ -24,7 +25,7 @@ const Table = ({ data: initialData }) => {
     const handleUpdate = async (updatedTruck) => {
         try {
         const response = await fetch(
-            `http://localhost:8000/api/trucklog/update/${updatedTruck.id}/`,
+            `http://46.148.36.110:226/api/trucklog/update/${updatedTruck.id}/`,
             {
             method: "PUT",
             headers: {
@@ -52,10 +53,12 @@ const Table = ({ data: initialData }) => {
     };
 
     const handleDelete = async (id) => {
-      if (!window.confirm("آیا از حذف این رکورد اطمینان دارید؟")) return;
+      if (typeof window !== 'undefined') {
+        if (!window.confirm("آیا از حذف این رکورد اطمینان دارید؟")) return;
+      }
   
       const response = await fetch(
-        `http://localhost:8000/api/trucklog/delete/${id}/`,
+        `http://46.148.36.110:226/api/trucklog/delete/${id}/`,
         {
           method: "DELETE",
         }
@@ -99,28 +102,30 @@ const Table = ({ data: initialData }) => {
   return (
     <div className="overflow-x-auto rounded-lg p-4" dir="rtl">
       <div className="mb-4">
-        <select
-          onChange={(e) => toggleColumnVisibility(e.target.value)}
-          className="px-4 py-2 border border-gray-300 rounded"
-        >
-          <option value="" disabled selected>انتخاب ستون</option>
-          {Object.keys(visibleColumns).map((column) => (
-            <option key={column} value={column}>
-              {column === 'row' && 'ردیف'}
-              {column === 'plate' && 'پلاک'}
-              {column === 'containerCode' && 'کد کانتینر'}
-              {column === 'loadType' && 'نوع بار'}
-              {column === 'containerSize' && 'سایز کانتینر'}
-              {column === 'driverId' && 'آیدی راننده'}
-              {column === 'weight' && 'وزن'}
-              {column === 'seal' && 'پلمپ'}
-              {column === 'imdg' && 'خطرناک'}
-              {column === 'status' && 'وضعیت'}
-              {column === 'logTime' && 'تاریخ عبور'}
-              {column === 'actions' && 'عملیات'}
-            </option>
-          ))}
-        </select>
+      <select
+        onChange={(e) => toggleColumnVisibility(e.target.value)}
+        className="px-4 py-2 border border-gray-300 rounded"
+        defaultValue=""
+      >
+        <option value="" disabled>انتخاب ستون</option>
+        {Object.keys(visibleColumns).map((column) => (
+          <option key={column} value={column}>
+            {column === 'row' && 'ردیف'}
+            {column === 'plate' && 'پلاک'}
+            {column === 'containerCode' && 'کد کانتینر'}
+            {column === 'loadType' && 'نوع بار'}
+            {column === 'containerSize' && 'سایز کانتینر'}
+            {column === 'driverId' && 'آیدی راننده'}
+            {column === 'weight' && 'وزن'}
+            {column === 'seal' && 'پلمپ'}
+            {column === 'imdg' && 'خطرناک'}
+            {column === 'status' && 'وضعیت'}
+            {column === 'logTime' && 'تاریخ عبور'}
+            {column === 'actions' && 'عملیات'}
+          </option>
+        ))}
+      </select>
+
       </div>
 
       <table className="min-w-full table-auto border border-gray-300 justify-center align-middle items-center">
@@ -147,12 +152,14 @@ const Table = ({ data: initialData }) => {
               {visibleColumns.plate && (
                 <td className="px-4 py-2 align-middle space-y-2">
                     {
-                        item.lp_codes.map((lpCode, index) => (
-                            <IranLicensePlate
-                            key={index}
-                            lpCode={lpCode}
-                            ws="150"
-                            />
+                        item?.lp_codes?.map((lpCode, index) => (
+                          <div key={index}>
+                            {item.plate_type === "Iran" ? (
+                                <IranLicensePlate lpCode={lpCode} ws="150" />
+                            ) : item.plate_type === "Afghan" ? (
+                                <AfghanLicensePlate lpCode={lpCode} ws="150" />
+                            ) : null}
+                          </div>
                         ))
                     }
                 </td>
@@ -161,7 +168,7 @@ const Table = ({ data: initialData }) => {
                 <td className="px-4 py-2 align-middle space-y-2">
 
                     {
-                        item.container_codes.map((containerCode, index) => (
+                        item.container_codes?.map((containerCode, index) => (
                             <ContainerPlate
                             key={index}
                             part1={containerCode.slice(0, 4)}

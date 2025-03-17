@@ -61,7 +61,7 @@ const Sidebar = ({ isOpen }) => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await fetch('http://127.0.0.1:8000/api/dashboard/');
+                const response = await fetch('http://46.148.36.110:226/api/dashboard/');
                 const data = await response.json();
                 setDashboardData(data);
 

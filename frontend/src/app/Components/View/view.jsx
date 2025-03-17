@@ -66,7 +66,7 @@ const View = ({ truck, onClose }) => {
               <label className="block text-sm font-medium mb-2">عکس پلاک</label>
               {truck.lp_image ? (
                 <img
-                  src={`http://localhost:8000/media/${truck.lp_image}`}
+                  src={`http://46.148.36.110:226/api/media/${truck.lp_image}`}
                   alt="LP Image"
                   className="w-full h-40 object-contain border border-gray-300 rounded-lg mb-2"
                 />
@@ -79,7 +79,7 @@ const View = ({ truck, onClose }) => {
               <label className="block text-sm font-medium mb-2">عکس کانتینر</label>
               {truck.container_image ? (
                 <img
-                  src={`http://localhost:8000/media/${truck.container_image}`}
+                  src={`http://46.148.36.110:226/api/media/${truck.container_image}`}
                   alt="Container Image"
                   className="w-full h-40 object-contain border border-gray-300 rounded-lg mb-2"
                 />

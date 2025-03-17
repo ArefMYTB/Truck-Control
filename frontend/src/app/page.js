@@ -1,23 +1,24 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { BrowserRouter as Router, Route, Routes, useNavigate } from "react-router-dom";
+import { useRouter } from "next/navigation"; // Correct Next.js routing
 import Navbar from "./Components/Navbar/navbar";
 import Sidebar from "./Components/Slidebar/slidebar";
 import Camera from "./Containers/Camera/camera";
 import Records from "./Containers/Records/records";
-import Login from "./Containers/Login/login";
 
 const ProtectedRoute = ({ children }) => {
-  const navigate = useNavigate();
-  const isAuthenticated = localStorage.getItem("authToken"); // Check token
+  const router = useRouter();
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   useEffect(() => {
-    if (!isAuthenticated) {
-      navigate("/login"); // Redirect if not logged in
+    const token = localStorage.getItem("authToken");
+    setIsAuthenticated(!!token);
+    if (!token) {
+      router.push("/login"); // Use Next.js router instead of useNavigate
     }
-  }, [isAuthenticated, navigate]);
+  }, [router]);
 
-  return isAuthenticated ? children : null; // Render children only if authenticated
+  return isAuthenticated ? children : null;
 };
 
 export default function Home() {
@@ -25,23 +26,13 @@ export default function Home() {
   const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
 
   return (
-    <Router>
-      <Routes>
-        <Route path="/login" element={<Login />} />
-        <Route
-          path="/"
-          element={
-            <ProtectedRoute>
-              <>
-                <Navbar isSidebarOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
-                <Sidebar isOpen={isSidebarOpen} />
-                <Camera />
-                <Records />
-              </>
-            </ProtectedRoute>
-          }
-        />
-      </Routes>
-    </Router>
+    <ProtectedRoute>
+      <>
+        <Navbar isSidebarOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
+        <Sidebar isOpen={isSidebarOpen} />
+        <Camera />
+        <Records />
+      </>
+    </ProtectedRoute>
   );
 }

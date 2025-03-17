@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import IranLicensePlate from "@/app/Components/Plate/License_Plate/Iran/lp";
+import AfghanLicensePlate from "@/app/Components/Plate/License_Plate/Afghan/lp";
 import ContainerPlate from "@/app/Components/Plate/Container_Plate/cp";
 import { FaEdit } from 'react-icons/fa';
 import { FaTrashCan } from 'react-icons/fa6';
@@ -22,7 +23,7 @@ const Current = ({ data: initialData }) => {
     const handleUpdate = async (updatedTruck) => {
         try {
             const response = await fetch(
-                `http://localhost:8000/api/trucklog/update/${updatedTruck.id}/`,
+                `http://46.148.36.110:226/api/trucklog/update/${updatedTruck.id}/`,
                 {
                     method: "PUT",
                     headers: {
@@ -46,10 +47,12 @@ const Current = ({ data: initialData }) => {
     };
 
     const handleDelete = async (id) => {
-        if (!window.confirm("آیا از حذف این رکورد اطمینان دارید؟")) return;
+        if (typeof window !== 'undefined') {
+            if (!window.confirm("آیا از حذف این رکورد اطمینان دارید؟")) return;
+        }
 
         const response = await fetch(
-            `http://localhost:8000/api/trucklog/delete/${id}/`,
+            `http://46.148.36.110:226/api/trucklog/delete/${id}/`,
             {
                 method: "DELETE",
             }
@@ -79,7 +82,7 @@ const Current = ({ data: initialData }) => {
                         <span>پلاک</span>
                         <div className="flex">
                         <img
-                            src={`http://localhost:8000/media/${data?.lp_image}`}
+                            src={`http://46.148.36.110:226/api/media/${data?.lp_image}`}
                             alt="License Plate"
                             className="w-[150px]"
                         />
@@ -92,11 +95,11 @@ const Current = ({ data: initialData }) => {
                         {
                             data?.lp_codes?.map((lpCode, index) => (
                                 <div key={index}>
-                                    <IranLicensePlate
-                                    key={index}
-                                    lpCode={lpCode}
-                                    ws="150"
-                                    />
+                                    {data.plate_type === "Iran" ? (
+                                        <IranLicensePlate lpCode={lpCode} ws="150" />
+                                    ) : data.plate_type === "Afghan" ? (
+                                        <AfghanLicensePlate lpCode={lpCode} ws="150" />
+                                    ) : null}
                                     {data?.lp_acc && data?.lp_acc[index] && (
                                         <div className="flex-grow flex justify-between items-center text-[10px] mt-2">
                                         <span>درصد تشخیص: <span className="text-green-500">{data?.lp_acc[index]}%</span></span>
@@ -116,7 +119,7 @@ const Current = ({ data: initialData }) => {
                         <span>کد کانتینر</span>
                         <div className="flex">
                             <img
-                                src={`http://localhost:8000/media/${data?.container_image}`}
+                                src={`http://46.148.36.110:226/api/media/${data?.container_image}`}
                                 alt="Container Code"
                                 className="w-[150px]"
                             />
@@ -154,7 +157,7 @@ const Current = ({ data: initialData }) => {
                         <div className="flex justify-center gap-2">
                             <div className="flex flex-col items-center">
                                 <img
-                                    src={`http://localhost:8000/media/${data?.vehicle_image_front}`}
+                                    src={`http://46.148.36.110:226/api/media/${data?.vehicle_image_front}`}
                                     alt="Front Truck"
                                     className="w-[200px] h-[150] rounded-lg"
                                 />
@@ -168,7 +171,7 @@ const Current = ({ data: initialData }) => {
                             </div>
                             <div className="flex flex-col items-center">
                                 <img
-                                    src={`http://localhost:8000/media/${data?.vehicle_image_back}`}
+                                    src={`http://46.148.36.110:226/api/media/${data?.vehicle_image_back}`}
                                     alt="Back Truck"
                                     className="w-[200px] h-[150] rounded-lg"
                                 />
@@ -187,7 +190,7 @@ const Current = ({ data: initialData }) => {
                         <span className="text-center"> احراز هویت</span>
                         <div className="flex flex-col items-center">
                             <img
-                                src={`http://localhost:8000/media/${data?.driver_face}`}
+                                src={`http://46.148.36.110:226/api/media/${data?.driver_face}`}
                                 alt="Driver Image"
                                 className="w-[100px] h-[100] rounded-lg"
                             />
