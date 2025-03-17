@@ -7,7 +7,7 @@ from rest_framework import status
 from .models import Truck
 from .serializers import TruckSerializer
 import random
-from django.http import JsonResponse
+from django.http import JsonResponse, StreamingHttpResponse
 from django.views.decorators.csrf import csrf_exempt
 import json
 from django.contrib.auth import authenticate, login as auth_login
@@ -15,7 +15,13 @@ from .forms import LoginForm
 from captcha.models import CaptchaStore
 from captcha.helpers import captcha_image_url
 from django.shortcuts import render
+import cv2
+import threading
+from pathlib import Path
+import os
 
+BASE_DIR = Path(__file__).resolve().parent.parent
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
 
 @csrf_exempt
 def refresh_captcha(request):
@@ -69,13 +75,88 @@ def get_dashboard_data(request):
 
     return Response(response_data)
 
+
+
+
+# class VideoCamera:
+#     def __init__(self):
+#         self.video_url = "rtsp://admin:Admin%40123@192.168.10.11:554"
+#         self.video = cv2.VideoCapture(self.video_url, cv2.CAP_FFMPEG)
+
+#         if not self.video.isOpened():
+#             print("Failed to open RTSP stream")
+#             self.running = False
+#             return
+        
+#         self.running = True
+#         self.grabbed, self.frame = self.video.read()
+#         self.lock = threading.Lock()  # Prevents race conditions
+#         self.thread = threading.Thread(target=self.update, daemon=True)
+#         self.thread.start()
+
+#     def update(self):
+#         while self.running:
+#             grabbed, frame = self.video.read()
+#             if not grabbed:
+#                 print("Failed to grab frame, retrying...")
+#                 continue  # Prevents self.frame from being None
+#             with self.lock:
+#                 self.frame = frame
+
+#     def get_frame(self):
+#         with self.lock:
+#             if self.frame is None:
+#                 return None
+
+#             success, jpeg = cv2.imencode('.jpg', self.frame)
+#             if not success:
+#                 print("Encoding failed")
+#                 return None  # Prevent sending invalid data
+
+#             return jpeg.tobytes()
+
+
+#     def stop(self):
+#         self.running = False
+#         self.thread.join()  # Ensures clean exit
+#         self.video.release()
+
+# def get_camera(camera):
+#     while camera.running:
+#         frame = camera.get_frame()
+#         # print(frame)
+#         if frame:
+#             yield (b'--frame\r\n'
+#                    b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n\r\n')
+#         else:
+#             print("No frame available")
+
+# def stream_video(request):
+#     cam = VideoCamera()
+#     if not cam.running:
+#         return StreamingHttpResponse("Failed to open RTSP stream", status=500)
+
+#     try:
+#         return StreamingHttpResponse(
+#             get_camera(cam),
+#             content_type='multipart/x-mixed-replace; boundary=frame'
+#         )
+#     except Exception as e:
+#         print(f"Error occurred: {e}")
+#         cam.stop()
+    
+#     return StreamingHttpResponse("Stream stopped", status=500)
+
+
+
+
 @api_view(['GET'])
 def get_camera_videos(request):
     video_data = [
-        {"id": "4", "title": "دوربین پلاک خوان", "video_src": "/media/videos/LP.mp4"},
-        {"id": "3", "title": "دوربین کانتینر بغل", "video_src": "/media/videos/side.mp4"},
-        {"id": "2", "title": "دوربین پشت", "video_src": "/media/videos/back.mp4"},
-        {"id": "1", "title": "دوربین روبرو", "video_src": "/media/videos/front.mp4"},
+        {"id": "4", "title": "دوربین پلاک خوان", "video_src": "/media/temp/LP.mp4"},
+        {"id": "3", "title": "دوربین کانتینر بغل", "video_src": "/media/temp/side.mp4"},
+        {"id": "2", "title": "دوربین پشت", "video_src": "/media/temp/back.mp4"},
+        {"id": "1", "title": "دوربین روبرو", "video_src": "/stream.m3u8"},
     ]
 
     return Response(video_data)

@@ -10,13 +10,11 @@ urlpatterns = [
     path('captcha/refresh/', views.refresh_captcha, name='refresh_captcha'),
     path('captcha/', include('captcha.urls')), 
 
-    path('api/dashboard/', views.get_dashboard_data, name='dashboard_data'),
-    path('api/videos/', views.get_camera_videos, name='camera_videos'),
+    path('dashboard/', views.get_dashboard_data, name='dashboard_data'),
+    path('videos/', views.get_camera_videos, name='camera_videos'),
+    # path("stream_video/", views.stream_video, name="stream_video"),
     
-    path('api/trucklog/', views.get_truck_data, name='get_truck_data'),
-    path('api/trucklog/update/<int:pk>/', views.update_truck, name='update_truck'),
-    path('api/trucklog/delete/<int:pk>/', views.delete_truck, name='delete_truck'),
-]
-
-if settings.DEBUG:
-    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+    path('trucklog/', views.get_truck_data, name='get_truck_data'),
+    path('trucklog/update/<int:pk>/', views.update_truck, name='update_truck'),
+    path('trucklog/delete/<int:pk>/', views.delete_truck, name='delete_truck'),
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT) + static(settings.STATIC_URL, document_root=settings.STATICFILES_DIRS[0])
